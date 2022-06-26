@@ -1,12 +1,57 @@
 const http = require('http')
 const { v4: uuidv4 } = require('uuid');
+const errorHandle = require('./errorHandle.js')
+const headers = require('./headers.js')
 
-
+const todos = []
 
 const requestListener = (req,res)=>{
-  res.writeHead(200,{'Content-Type': 'text/plain'})
-  res.write('123333')
-  res.end()
+  let body = ''
+  req.on('data', chunk=>{
+    body += chunk
+  })
+
+  if(req.url === '/todos' && req.method === 'GET') {
+    res.writeHead(200, headers)
+    res.write(JSON.stringify({
+      status: 'success',
+      data: todos
+    }))
+    res.end()  
+  } else if(req.url === '/todos' && req.method === 'POST') {
+    req.on('end',()=>{
+      try{
+        const title = JSON.parse(body).title
+        if(title === undefined) return errorHandle(res)
+        
+        const todo = { title, id: uuidv4() }
+
+        todos.push(todo)
+        res.writeHead(200, headers)
+        res.write(JSON.stringify({
+          status: 'success',
+          data: todos
+        }))
+        res.end()
+      } catch(error) {
+        errorHandle(res)
+      }
+    })
+  } else if(req.method === 'OPTIONS') {
+    res.writeHead(200, headers)
+    res.write(JSON.stringify({
+      status: 'success',
+      message: 'OPTIONS'
+    }))
+    res.end()  
+  } else {
+    res.writeHead(404, headers)
+    res.write(JSON.stringify({
+      status: 'false',
+      message: '無此路由'
+    }))
+    res.end()  
+  }
 }
 
 
