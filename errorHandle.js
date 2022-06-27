@@ -5,9 +5,9 @@ const errorHandle = (res) => {
   res.writeHead(400, headers)
   res.write(JSON.stringify({
     status: 'false',
-    message: '欄位錯誤'
+    message: '欄位錯誤拉'
   }))
   res.end()
 }
 
-module.export = errorHandle
+module.exports = errorHandle
