@@ -12,5 +12,8 @@
   "dependencies": {
     "nodemon": "^2.0.19",
     "uuid": "^8.3.2"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
