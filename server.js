@@ -45,7 +45,26 @@ const requestListener = (req,res)=>{
       data: todos,
     }))
     res.end()
-  } else if(req.url.startsWith('/todos/') && req.method === 'DELETE') {
+  }  else if(req.url.startsWith('/todos/') && req.method === 'PATCH') {
+    req.on('end',()=>{
+      try{
+        const title = JSON.parse(body).title
+        console.log(title);
+        const id = req.url.split('/').pop()
+        const index = todos.findIndex(item=> item.id ===id)
+        if(title === undefined || index === -1) return errorHandle(res)
+        todos[index].title = title
+        res.writeHead(200, headers)
+        res.write(JSON.stringify({
+          status: 'success',
+          data: todos
+        }))
+        res.end()
+      } catch(error) {
+        errorHandle(res)
+      }
+    })
+  }else if(req.url.startsWith('/todos/') && req.method === 'DELETE') {
     const id = req.url.split('/').pop()
     const index = todos.findIndex(item=>item.id == id)
 
